@@ -1,17 +1,343 @@
-[33mcommit 5cff6d563eb0fa2369f41d46814f302de37c23ee[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
-Author: reddollavaish <reddollavaish@gmail.com>
-Date:   Mon Aug 4 02:16:38 2025 +0530
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    firstcommit
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
-[33mcommit 03b77226933a3c94a0c2f17e4f7761cfb61de1f7[m
-Author: reddollavaish <reddollavaish@gmail.com>
-Date:   Mon Aug 4 02:05:15 2025 +0530
+        .stopwatch-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
 
-    Add files via upload
+        .heading {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
 
-[33mcommit 8ed6237d33e99a3c8dff9fd8759c11a6f511fa41[m
-Author: reddollavaish <reddollavaish@gmail.com>
-Date:   Mon Aug 4 02:04:32 2025 +0530
+        .subheading {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
 
-    Create README.md
+        .time-display {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 30px;
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px solid #e9ecef;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .start-btn {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .start-btn:hover {
+            background: linear-gradient(45deg, #218838, #1ba085);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .pause-btn {
+            background: linear-gradient(45deg, #ffc107, #fd7e14);
+            color: white;
+        }
+
+        .pause-btn:hover {
+            background: linear-gradient(45deg, #e0a800, #e8680d);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
+        }
+
+        .pause-btn:disabled {
+            background: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .stop-btn {
+            background: linear-gradient(45deg, #dc3545, #fd7e14);
+            color: white;
+        }
+
+        .stop-btn:hover {
+            background: linear-gradient(45deg, #c82333, #e8680d);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3);
+        }
+
+        .reset-btn {
+            background: linear-gradient(45deg, #6c757d, #495057);
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background: linear-gradient(45deg, #5a6268, #3d4349);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(108, 117, 125, 0.3);
+        }
+
+        .lap-btn {
+            background: linear-gradient(45deg, #007bff, #6610f2);
+            color: white;
+        }
+
+        .lap-btn:hover {
+            background: linear-gradient(45deg, #0056b3, #520dc2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+        }
+
+        .lap-times {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .lap-times h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .lap-item {
+            background: #f8f9fa;
+            padding: 12px 20px;
+            margin: 8px 0;
+            border-radius: 10px;
+            border-left: 4px solid #007bff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Courier New', monospace;
+        }
+
+        .lap-number {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .lap-time {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .running {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            .time-display {
+                font-size: 2.5rem;
+                padding: 15px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            button {
+                width: 200px;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stopwatch-container">
+        <h1 class="heading">STOPWATCH</h1>
+        
+        <div class="time-display" id="timeDisplay">00:00:00</div>
+        
+        <div class="controls">
+            <button class="start-btn" id="startBtn" onclick="start()">Start</button>
+            <button class="pause-btn" id="pauseBtn" onclick="pause()" disabled>Pause</button>
+            <button class="lap-btn" id="lapBtn" onclick="recordLap()" disabled>Lap</button>
+            <button class="reset-btn" id="resetBtn" onclick="reset()">Reset</button>
+        </div>
+
+        <div class="lap-times" id="lapTimes">
+            <h3 style="display: none;" id="lapTitle">Lap Times</h3>
+            <div id="lapList"></div>
+        </div>
+    </div>
+
+    <script>
+        let startTime = 0;
+        let elapsedTime = 0;
+        let timerInterval = null;
+        let isRunning = false;
+        let lapCount = 0;
+
+        const timeDisplay = document.getElementById('timeDisplay');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const lapBtn = document.getElementById('lapBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const lapTitle = document.getElementById('lapTitle');
+        const lapList = document.getElementById('lapList');
+
+        function formatTime(milliseconds) {
+            const totalSeconds = Math.floor(milliseconds / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            const ms = Math.floor((milliseconds % 1000) / 10);
+
+            return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${ms.toString().padStart(2, '0')}`;
+        }
+
+        function updateDisplay() {
+            const currentTime = Date.now();
+            elapsedTime = currentTime - startTime;
+            timeDisplay.textContent = formatTime(elapsedTime);
+        }
+
+        function start() {
+            if (!isRunning) {
+                startTime = Date.now() - elapsedTime;
+                timerInterval = setInterval(updateDisplay, 10);
+                isRunning = true;
+                
+                startBtn.disabled = true;
+                pauseBtn.disabled = false;
+                lapBtn.disabled = false;
+                timeDisplay.classList.add('running');
+            }
+        }
+
+        function pause() {
+            if (isRunning) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                
+                startBtn.disabled = false;
+                pauseBtn.disabled = true;
+                lapBtn.disabled = true;
+                timeDisplay.classList.remove('running');
+            }
+        }
+
+        function reset() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            elapsedTime = 0;
+            lapCount = 0;
+            
+            timeDisplay.textContent = '00:00:00';
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            lapBtn.disabled = true;
+            timeDisplay.classList.remove('running');
+            
+            // Clear lap times
+            lapList.innerHTML = '';
+            lapTitle.style.display = 'none';
+        }
+
+        function recordLap() {
+            if (isRunning) {
+                lapCount++;
+                const lapTime = formatTime(elapsedTime);
+                
+                const lapItem = document.createElement('div');
+                lapItem.className = 'lap-item';
+                lapItem.innerHTML = `
+                    <span class="lap-number">Lap ${lapCount}</span>
+                    <span class="lap-time">${lapTime}</span>
+                `;
+                
+                lapList.insertBefore(lapItem, lapList.firstChild);
+                lapTitle.style.display = 'block';
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            switch(event.code) {
+                case 'Space':
+                    event.preventDefault();
+                    if (!isRunning && !startBtn.disabled) {
+                        start();
+                    } else if (isRunning) {
+                        pause();
+                    }
+                    break;
+                case 'KeyL':
+                    if (isRunning) {
+                        recordLap();
+                    }
+                    break;
+                case 'KeyR':
+                    reset();
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>
